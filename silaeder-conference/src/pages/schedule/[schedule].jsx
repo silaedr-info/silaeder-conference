@@ -1,13 +1,14 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { MantineReactTable } from 'mantine-react-table';
 import { useRouter } from 'next/router';
-import {Box, Button, Title, Tooltip, Select, Text} from "@mantine/core";
+import {Box, Button, Title, Tooltip, Select, Text, Modal, Container, NumberInput} from "@mantine/core";
 import {
     IconEye,
     IconPlayerPlay, IconPlus
 } from '@tabler/icons-react';
 import { redirect } from 'next/dist/server/api-utils';
 import { IconEyeOff } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
 
 const start_data = [
     {
@@ -53,6 +54,12 @@ const Schedule = () => {
 
     const [permission, setPermission] = useState(false);
 
+    const [anotherOpened, changeOpened] = useState(false);
+
+    const form = useForm();
+
+    const [pos, changePos] = useState()
+
     const [name_of_conference, setName_of_conference] = useState("");
     if (typeof window !== 'undefined') {
         const tags = document.getElementsByTagName('td');
@@ -61,6 +68,19 @@ const Schedule = () => {
                 tags[i].style.backgroundColor = '#CCCCCC'
             }
         }
+    }
+
+    const addBreak = async (time, id, pos) => {
+        changeOpened(false)
+        await fetch('/api/addBreak', {
+            method: 'post',
+            body: JSON.stringify({
+                time: time,
+                conference_id: id,
+                schedule_pos: pos
+            })
+        })
+        location.reload()
     }
 
     useEffect(() => {
@@ -148,6 +168,23 @@ const Schedule = () => {
 
     return (
         <>
+            <Modal opened={anotherOpened} onClose={() => { changeOpened(false) }} title="" centered>
+                <Container size={350} my={10}>
+                    <Title
+                        align="center"
+                        sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}
+                    >
+                        Добавить перерыв
+                    </Title>
+                    <form onSubmit={form.onSubmit((values) => addBreak(Number(values.time), Number(router.query.schedule), Number(pos) + 1))}>
+                        <NumberInput label="Длительность перерыва" placeholder="Время в минутах" required mt="md" {...form.getInputProps('time')} />
+                        <Button type={'submit'} fullWidth mt="xl" color="indigo.4">
+                            Сохранить
+                        </Button>
+                    </form>
+                </Container>
+            </Modal>
+
             <Title
                 align="center"
                 sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}`, fontWeight: 900 })}
@@ -187,9 +224,8 @@ const Schedule = () => {
                         }}></Button>
                     </Tooltip>
                     <Tooltip label={"Добавить перерыв после"} transitionProps={{ transition: 'slide-up', duration: 300 }} withArrow={true} color={"rgba(0.3, 0.3, 0.3, 0.6)"}>
-                        <Button color={"indigo.4"} variant={"outline"} leftIcon={<IconPlus height={40} width={40} color={"#748FFC"} />}
-                                onClick={(event) => { console.log(1)
-                        }} pl={'6%'} pr={'3%'}></Button>
+                        <Button color="indigo.4" variant={"outline"} leftIcon={<IconPlus height={40} width={40} color={"#748FFC"} />}
+                                onClick={() => { changeOpened(true); changePos(Number(row.id) + 1) }} pl={'6%'} pr={'3%'}></Button>
                     </Tooltip></> : <></>}
                 </div>}
                 mantineTableBodyRowProps={({ row }) => ({
