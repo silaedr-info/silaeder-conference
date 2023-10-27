@@ -8,6 +8,7 @@ export default async function getConferenceNameByID(req, res) {
         }
     });
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
+
     res.status(200).json({ name: conference[0].name })
 }

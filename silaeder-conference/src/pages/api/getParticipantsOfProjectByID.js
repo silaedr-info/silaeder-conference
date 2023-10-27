@@ -30,7 +30,7 @@ export default async function getParticipantsOfProjectByID(req, res) {
         })
     }
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
 
     res.status(200).json({ output: output })
 }

@@ -11,6 +11,7 @@ export default async function addConference(req, res) {
         }
     });
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
+
     res.status(200).json({ ok: true });
 }

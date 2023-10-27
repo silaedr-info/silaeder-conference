@@ -6,6 +6,7 @@ export default async function saveProjectsAndBreaks(req, res) {
 
     for (const el of objects) {
         const idx = objects.indexOf(el)+1;
+
         if (el.type === "project") {
             await prisma.project.update({
                 where: {
@@ -31,6 +32,7 @@ export default async function saveProjectsAndBreaks(req, res) {
         }
     }
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
+
     res.status(200).json({ ok: true })
 }

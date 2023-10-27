@@ -1,7 +1,6 @@
 import formidable from "formidable";
-import fsPromises from "fs/promises";
+import fs from "fs";
 import path from "path";
-import fsExists from 'fs.promises.exists'
 
 export const config = {
     api: {
@@ -11,31 +10,29 @@ export const config = {
 
 const post = async (req, res) => {
     const form = new formidable.IncomingForm();
-    await form.parse(req, async function (err, fields, files) {
+    form.parse(req, async function (err, fields, files) {
         await saveFile(files.file, fields.type, fields.id, fields.wasProject);
         return res.status(201).send("");
     });
 };
 
-const saveFile = async (file, type, id) => {
-    if (file) {
-        if (fsExists(`./public/${type}/${id}${path.extname(file.originalFilename)}`)) {
-            try {
-                const data = await fsPromises.readFile(file.filepath);
-                await fsPromises.writeFile(`./public/${type}/${id}${path.extname(file.originalFilename)}`, data);
-                await fsPromises.unlink(file.filepath);
-            } catch (e) {
-                console.log(e)
-            }
-        } else {
-            try {
-                const data = await fsPromises.readFile(file.filepath);
-                await fsPromises.unlink(`./public/${type}/${id}${path.extname(file.originalFilename)}`);
-                await fsPromises.writeFile(`./public/${type}/${id}${path.extname(file.originalFilename)}`, data);
-                await fsPromises.unlink(file.filepath);
-            } catch (e) {
-                console.log(e)
-            }
+const saveFile = async (file, type, id, wasProject) => {
+    if (!wasProject) {
+        try {
+            const data = fs.readFileSync(file.filepath);
+            fs.writeFileSync(`./files/${type}/${id}${path.extname(file.originalFilename)}`, data);
+            await fs.unlinkSync(file.filepath);
+        } catch (e) {
+            
+        }
+    } else {
+        try {
+            const data = fs.readFileSync(file.filepath);
+            await fs.unlinkSync(`./files/${type}/${id}${path.extname(file.originalFilename)}`);
+            fs.writeFileSync(`./files/${type}/${id}${path.extname(file.originalFilename)}`, data);
+            await fs.unlinkSync(file.filepath);
+        } catch (e) {
+            
         }
     }
     return 'ok';

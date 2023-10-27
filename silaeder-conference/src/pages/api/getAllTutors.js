@@ -9,7 +9,5 @@ export default async function getAllUsers(req, res) {
             json.push({label: e.name, value: e.id})
         }
     })
-
-    await prisma.$disconnect()
     res.status(200).json({ data: json })
 }

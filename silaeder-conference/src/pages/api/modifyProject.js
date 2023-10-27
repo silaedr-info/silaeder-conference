@@ -8,7 +8,7 @@ export default async function CreateProject(req, res) {
     if (req.method === "POST") {
         const jwt = getCookie('auth_token', { req, res })
         const user_id = JSON.parse(atob(jwt.split('.')[1])).user_id
-        const { name, description, time_for_speech, grade, section, conference_id, members, additional_users } = req.body
+        const { name, description, time_for_speech, grade, section, conference_id, members } = req.body
         const user = await prisma.user.findMany(
             {
                 where: {
@@ -61,7 +61,7 @@ export default async function CreateProject(req, res) {
                 timeForSpeech: time_for_speech,
                 grade: grade,
                 active: true,
-                additionalUsers: additional_users,
+                additionalUsers: req.body.additional_users,
                 users:
                     {
                         create: users
@@ -73,8 +73,8 @@ export default async function CreateProject(req, res) {
                 },
             }
         })
+        await prisma.$disconnect()
 
-        await prisma.$disconnect();
         return res.status(200).json({ success: true })
     }
 }

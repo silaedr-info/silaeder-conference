@@ -39,7 +39,7 @@ export default async function getTimeOfProjectStart(req, res) {
 
     startTime.setMinutes(startTime.getMinutes()+time);
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
 
     res.status(200).json({ time: startTime.getHours()+":"+startTime.getMinutes() });
 }

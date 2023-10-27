@@ -24,19 +24,20 @@ export default async function handler(req, res) {
                     try {
                         jwt.verify(token, user[0].password_hash);
 
-                        await prisma.$disconnect();
                         res.status(200).json({
                             status: "ok"
                         });
                     } catch (e) {
-                        await prisma.$disconnect();
+                        await prisma.$disconnect()
+
                         res.status(200).json({
                             status: "error"
                         });
                     }
                 }
             } else {
-                await prisma.$disconnect();
+                await prisma.$disconnect()
+
                 res.status(200).json({
                     status: "error"
                 });
@@ -44,7 +45,8 @@ export default async function handler(req, res) {
 
 
         } catch (e) {
-            await prisma.$disconnect();
+            await prisma.$disconnect()
+
             res.status(200).json({
                 status: "error"
             });

@@ -2,10 +2,17 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient
 export default async function addBreak(req, res) {
-    const body = JSON.parse(req.body)
-    const time = body.time;
-    const conference_id = body.conference_id;
-    const schedule_pos = body.schedule_pos;
+    const time = req.body.time;
+    const conference_id = req.body.conference_id;
+    const schedule_pos = req.body.schedule_pos;
+
+    await prisma.break.create({
+        data: {
+            time: time,
+            conferenceId: conference_id,
+            schedulePos: schedule_pos
+        }
+    });
 
     const conference = await prisma.conference.findMany({
         where: {
@@ -61,14 +68,6 @@ export default async function addBreak(req, res) {
         }
     }
 
-    await prisma.break.create({
-        data: {
-            time: time,
-            conferenceId: conference_id,
-            schedulePos: schedule_pos
-        }
-    });
-
     let i = schedule_pos + 1;
     while (true) {
         let can_continue = false;
@@ -93,8 +92,6 @@ export default async function addBreak(req, res) {
         if (!can_continue) {
             for (const el of breaks) {
                 if (el.schedulePos === i) {
-                    can_continue = true
-
                     await prisma.break.update({
                         where: {
                             id: el.id
@@ -114,6 +111,8 @@ export default async function addBreak(req, res) {
             break;
         }
     }
+
+    await prisma.$disconnect()
 
     res.status(200).json({ ok: true })
 }

@@ -30,15 +30,13 @@ export default async function handler(req, res) {
                 const ip = requestIp.getClientIp(req);
                 const token = jwt.sign({ip: ip, user_id: user.id, auth_token: true}, MD5(password).toString());
                 setCookie('auth_token', token, { req, res })
-
-                await prisma.$disconnect();
-
+                await prisma.$disconnect()
                 res.status(200).json({
                     token: token
                 })
             }
         } else {
-            await prisma.$disconnect();
+            await prisma.$disconnect()
             return res.status(200).json({error: "not found"});
         }
     }

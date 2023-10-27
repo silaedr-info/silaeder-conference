@@ -45,28 +45,32 @@ async function getTimeOfProjectStart(conference_id, schedule_pos) {
 }
 
 async function getParticipantsOfProjectByID(id) {
-    const project = await prisma.project.findUnique({
+    const project = await prisma.project.findMany({
         where: {
             id: id
         },
+
         include: {
             users: true
         }
     });
 
+    const users = project[0].users;
     let output = "";
 
-    for (const user of project.users) {
-        const userObj = await prisma.user.findUnique({
+    for (let i = 0; i < users.length; i++) {
+        const user = await prisma.user.findMany({
             where: {
-                id: user.userID
+                id: users[i].userId
             }
         });
 
+        console.log(user[0].name)
+
         if (output === "") {
-            output = userObj.name;
+            output = user[0].name
         } else {
-            output += ", " + userObj.name;
+            output += ", " + user[0].name
         }
     }
 
@@ -91,7 +95,7 @@ export default async function getScheduleForConferenceID(req, res) {
     let output = [];
 
     let run = true;
-
+    
 
     while (run) {
 
@@ -101,7 +105,7 @@ export default async function getScheduleForConferenceID(req, res) {
                 schedulePos: i
             }
         });
-
+        
         if (data.length === 0) {
             const data1 = await prisma.break.findMany({
                 where: {
@@ -111,7 +115,7 @@ export default async function getScheduleForConferenceID(req, res) {
             });
             if (data1.length === 0) {
                 run = false;
-
+                
             } else {
                 const data4 = await getTimeOfProjectStart(id, i);
 
@@ -140,7 +144,7 @@ export default async function getScheduleForConferenceID(req, res) {
         i++;
     }
 
-    await prisma.$disconnect();
+    await prisma.$disconnect()
 
     res.status(200).json({output: output})
 }
