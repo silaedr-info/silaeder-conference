@@ -7,5 +7,6 @@ export default async function getAllConferencesForSchedules(req, res) {
     users.forEach((e) => {
         json.push({ label: e.name, value: [e.id, e.start] })
     })
+    await prisma.$disconnect();
     res.status(200).json({ data: json })
 }

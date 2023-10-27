@@ -32,9 +32,11 @@ export default async function handler(req, res) {
             } else {
                 const code = getRandomInt(1000, 9999);
 
+                await prisma.$disconnect();
                 return res.status(200).json({code: code, name: user.name});
             }
         } else {
+            await prisma.$disconnect();
             return res.status(200).json({error: "not found"});
         }
     }

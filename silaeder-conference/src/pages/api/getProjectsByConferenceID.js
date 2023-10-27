@@ -13,5 +13,6 @@ export default async function getProjectsByConferenceID(req, res) {
     })
     conference[0].project.sort((a, b) => {return a.schedulePos - b.schedulePos})
 
+    await prisma.$disconnect();
     res.status(200).json({ projects: conference[0].project })
 }   

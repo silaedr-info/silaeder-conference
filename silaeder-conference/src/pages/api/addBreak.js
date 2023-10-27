@@ -7,14 +7,6 @@ export default async function addBreak(req, res) {
     const conference_id = body.conference_id;
     const schedule_pos = body.schedule_pos;
 
-    await prisma.break.create({
-        data: {
-            time: time,
-            conferenceId: conference_id,
-            schedulePos: schedule_pos
-        }
-    });
-
     const conference = await prisma.conference.findMany({
         where: {
             id: conference_id
@@ -68,6 +60,14 @@ export default async function addBreak(req, res) {
             }
         }
     }
+
+    await prisma.break.create({
+        data: {
+            time: time,
+            conferenceId: conference_id,
+            schedulePos: schedule_pos
+        }
+    });
 
     let i = schedule_pos + 1;
     while (true) {

@@ -21,6 +21,8 @@ export default async function getUserProjects(req, res) {
                 }
             })
         })
+
+        await prisma.$disconnect();
         await res.status(200).json({ projects: projects.sort((a, b) => {return a.id - b.id}) })
     }
 }

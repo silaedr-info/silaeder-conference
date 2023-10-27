@@ -10,5 +10,7 @@ export default async function getConferenceById(req, res) {
             id: id
         }
     })
+
+    await prisma.$disconnect();
     await res.status(200).json({ conference: conference })
 }

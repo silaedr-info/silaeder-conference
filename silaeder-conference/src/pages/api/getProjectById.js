@@ -20,5 +20,7 @@ export default async function getProjectById(req, res) {
             }
         })
     })
+
+    await prisma.$disconnect();
     await res.status(200).json({ project: projects[0] })
 }

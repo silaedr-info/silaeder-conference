@@ -13,5 +13,6 @@ export default async function editBreakDuration(req, res) {
         }
     });
 
+    await prisma.$disconnect();
     res.status(200).json({ ok: true });
 }

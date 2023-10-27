@@ -45,32 +45,29 @@ async function getTimeOfProjectStart(conference_id, schedule_pos) {
 }
 
 async function getParticipantsOfProjectByID(id) {
-    const project = await prisma.project.findMany({
+    const project = await prisma.project.findUnique({
         where: {
             id: id
         },
-
         include: {
             users: true
         }
     });
 
-    let output;
+    let output = "";
 
-    for (let el in project[0].users) {
-        const user = await prisma.user.findMany({
+    for (const user of project.users) {
+        const userObj = await prisma.user.findUnique({
             where: {
-                id: el.userID
+                id: user.userID
             }
         });
 
-        user.forEach((el1) => {
-            if (output === undefined) {
-                output = el1.name
-            } else {
-                output += ", " + el1.name
-            }
-        })
+        if (output === "") {
+            output = userObj.name;
+        } else {
+            output += ", " + userObj.name;
+        }
     }
 
     return output;
@@ -142,6 +139,8 @@ export default async function getScheduleForConferenceID(req, res) {
 
         i++;
     }
+
+    await prisma.$disconnect();
 
     res.status(200).json({output: output})
 }

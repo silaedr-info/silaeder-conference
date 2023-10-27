@@ -13,5 +13,6 @@ export default async function getBreaksByConferenceID(req, res) {
     })
     conference[0].break.sort((a, b) => {return a.schedulePos - b.schedulePos})
 
+    await prisma.$disconnect();
     res.status(200).json({ breaks: conference[0].break })
 }
