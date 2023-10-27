@@ -20,6 +20,7 @@ export function ScheduleCard({conference}) {
                                 label="Дата конференции"
                                 w={'35%'}
                                 mx="auto"
+                                required
                 />
                 <Center mt={'3%'}>
                     <Button color={'indigo.8'} onClick={() => handleClick(conference.value[0])}>Перейти к конференции</Button>

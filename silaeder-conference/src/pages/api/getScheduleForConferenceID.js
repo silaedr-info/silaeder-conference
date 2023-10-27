@@ -55,23 +55,22 @@ async function getParticipantsOfProjectByID(id) {
         }
     });
 
-    const users = project[0].users;
-    let output = "";
+    let output;
 
-    for (let i = 0; i < users.length; i++) {
+    for (let el in project[0].users) {
         const user = await prisma.user.findMany({
             where: {
-                id: users[i].userId
+                id: el.userID
             }
         });
 
-        console.log(user[0].name)
-
-        if (output === "") {
-            output = user[0].name
-        } else {
-            output += ", " + user[0].name
-        }
+        user.forEach((el1) => {
+            if (output === undefined) {
+                output = el1.name
+            } else {
+                output += ", " + el1.name
+            }
+        })
     }
 
     return output;
