@@ -134,7 +134,7 @@ export default async function getScheduleForConferenceID(req, res) {
 
             output.push({
                 id: data[0].id,
-                time: data2,
+                time: data5 ? '' : data2,
                 participants: data3,
                 name_of_project: data[0].name,
                 hidden: data5
