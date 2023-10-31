@@ -15,12 +15,14 @@ export default async function getUserProjects(req, res) {
         })
         const projects = []
         all_projects.forEach((project) => {
-            if (project.users[0].userId === user_id) {
-                projects.push(project)
-            }
+            project.users.forEach((user, index) => {
+                if (project.users[index].userId === user_id) {
+                    projects.push(project)
+                }
+            })
         })
 
         await prisma.$disconnect()
-        await res.status(200).json({ projects: projects.sort((a, b) => { return a.users[0].projectId - b.users[0].projectId }) })
+        await res.status(200).json({ projects: projects })
     }
 }

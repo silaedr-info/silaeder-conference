@@ -6,16 +6,7 @@ const prisma = new PrismaClient
 
 export default async function CreateProject(req, res) {
     if (req.method === "POST") {
-        const jwt = getCookie('auth_token', { req, res })
-        const user_id = JSON.parse(atob(jwt.split('.')[1])).user_id
         const { name, description, time_for_speech, grade, section, conference_id, members } = req.body
-        const user = await prisma.user.findMany(
-            {
-                where: {
-                    id: user_id
-                }
-            }
-        );
         const users = [
         ]
         const conference = await prisma.conference.findMany({
