@@ -73,20 +73,42 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export function HeaderResponsive({ links }) {
+export function HeaderResponsive() {
     const [anotherOpened, changeOpened] = useState(false);
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
     const [username, set_username] = useState('')
+    const router = useRouter()
+    const [user, setUser] = useState()
+    const [links, setLinks] = useState([
+        {label: "Авторизация", link: '/auth'},
+        {label: "Витрина проектов", link: '/showcase'},
+        {label: "Расписание конференции", link: '/schedules'},
+    ])
     useEffect(() => {
         const fetching = async () => {
             const x = await fetch('/api/getUserByID')
             return x.json()
         }
         fetching().then((data) => {
-            set_username(data.user.name);
+            if (data.user) {
+                set_username(data.user.name);
+                setUser(data.user)
+                setLinks([
+                    {label: "Свои проекты", link: '/'},
+                    {label: "Витрина проектов", link: '/showcase'},
+                    {label: "Расписание конференции", link: '/schedules'},
+                ])
+            } else {
+                setUser(undefined)
+                setLinks([
+                    {label: "Авторизация", link: '/auth'},
+                    {label: "Витрина проектов", link: '/showcase'},
+                    {label: "Расписание конференции", link: '/schedules'},
+                ])
+            }
         })
     }, [])
     const linkItems = links.map((link) => {
@@ -104,7 +126,11 @@ export function HeaderResponsive({ links }) {
 
     const handleClick = async () => {
         await fetch('api/logout')
-        const router = useRouter()
+        setLinks([
+            {label: "Авторизация", link: '/auth'},
+            {label: "Витрина проектов", link: '/showcase'},
+            {label: "Расписание конференции", link: '/schedules'},
+        ])
         await router.push('/auth')
     }
 
@@ -164,14 +190,18 @@ export function HeaderResponsive({ links }) {
                                 {theme.colorScheme === 'light' && <IconMoonStars size="1.2rem" />}
                             </ActionIcon>
                         </Group>
-                        <Menu.Target>
-                            <Avatar src={null} alt="no image here" color="indigo" radius="lg" />
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                            <Menu.Label>{username}</Menu.Label>
-                            <Menu.Item icon={<IconArrowsLeftRight size={14} />} onClick={() => { changeOpened(true) }}>Сменить пароль</Menu.Item>
-                            <Menu.Item onClick={handleClick} color="red" icon={<IconLogout size={14} />}>Выйти</Menu.Item>
-                        </Menu.Dropdown>
+                        { user &&
+                            <>
+                                <Menu.Target>
+                                    <Avatar src={null} alt="no image here" color="indigo" radius="lg" />
+                                </Menu.Target>
+                                <Menu.Dropdown>
+                                    <Menu.Label>{username}</Menu.Label>
+                                    <Menu.Item icon={<IconArrowsLeftRight size={14} />} onClick={() => { changeOpened(true) }}>Сменить пароль</Menu.Item>
+                                    <Menu.Item onClick={handleClick} color="red" icon={<IconLogout size={14} />}>Выйти</Menu.Item>
+                                </Menu.Dropdown>
+                            </>
+                        }
                     </Menu>
                 </Group>
 

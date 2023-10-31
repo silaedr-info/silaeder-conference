@@ -34,6 +34,12 @@ export default async function handler(req, res) {
                             status: "error"
                         });
                     }
+                } else {
+                    await prisma.$disconnect()
+
+                    res.status(200).json({
+                        status: "error"
+                    });
                 }
             } else {
                 await prisma.$disconnect()

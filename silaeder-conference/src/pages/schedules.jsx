@@ -4,6 +4,7 @@ import {useRouter} from "next/router";
 import {ScheduleCard} from '@/scheduleCard'
 const Schedules = () => {
     const [ conferences, setConferences ] = useState([]);
+    const [ permission, setPermission ] = useState(false)
     useEffect(() => {
         const fetchingConferences = async () => {
             const x = await fetch('/api/getAllConferencesForSchedules')
@@ -11,7 +12,17 @@ const Schedules = () => {
         }
         fetchingConferences().then((data) => {
             setConferences(data.data)
-            // conferences.sort()
+        })
+        fetch('/api/getUserPermission')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    setPermission(data.permission)
+                } else {
+                    setPermission(false)
+                }
+            }).catch((e) => {
+            router.push("/")
         })
     }, [conferences])
     const router = useRouter()
@@ -20,11 +31,14 @@ const Schedules = () => {
     }
     return (
         <>
-            <Center>
-                <Button w={'35%'} color='indigo.8' onClick={handleClick}>
-                    Создать новое расписание конференции
-                </Button>
-            </Center>
+            {permission &&
+                <Center>
+                    <Button w={'35%'} color='indigo.8' onClick={handleClick}>
+                        Создать новое расписание конференции
+                    </Button>
+                </Center>
+            }
+
             { conferences.map((conference) => (<ScheduleCard key={conference.id} conference={conference} />))
 
             }

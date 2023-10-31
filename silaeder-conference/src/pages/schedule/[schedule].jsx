@@ -11,12 +11,6 @@ import { IconEyeOff } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 
 const start_data = [
-    {
-        time: '10:00',
-        name_of_project: 'Первый проект',
-        participants: 'Первый Первопроектный Участник, Второй Первопроектный Участник',
-        hide: false
-    }
 ];
 
 const Schedule = () => {
@@ -45,7 +39,7 @@ const Schedule = () => {
     );
     const router = useRouter();
     const handleClick = () => {
-        router.push('/');
+        router.push('/demonstrateProject');
     };
     const presentClick = () => {
         router.push('/auth');
@@ -110,10 +104,10 @@ const Schedule = () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            setData(data.output)
+            const output = data.output.filter((elem) => !elem.hidden || permission)
+            setData(output)
         }).catch((e) => {
-            router.push("/123/123/123")
+            router.push("/404")
         })
 
         fetch('/api/getConferenceNameByID', {
@@ -125,7 +119,6 @@ const Schedule = () => {
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             setName_of_conference(data.name)
         }).catch((e) => {
             router.push("/123/123/123")
@@ -165,7 +158,6 @@ const Schedule = () => {
             router.push("/123/123/123")
         })
     }
-
     return (
         <>
             <Modal opened={anotherOpened} onClose={() => { changeOpened(false) }} title="" centered>
@@ -193,7 +185,7 @@ const Schedule = () => {
                 Расписание конференции {name_of_conference}
             </Title>
             <Box>
-            <MantineReactTable
+            <MantineReactTable render
                 autoResetPageIndex={true}
                 columns={columns}
                 data={data}
@@ -238,7 +230,7 @@ const Schedule = () => {
                 mantineRowDragHandleProps={({ table }) => ({
                     onDragEnd: () => {
                         const { draggingRow, hoveredRow } = table.getState();
-                        if (hoveredRow && draggingRow) {
+                        if (hoveredRow && draggingRow && permission) {
                             data.splice(
                                 hoveredRow.index,
                                 0,

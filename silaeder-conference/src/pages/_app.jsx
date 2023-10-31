@@ -13,16 +13,12 @@ export default function App(props) {
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
     const header = (
-        <HeaderResponsive links={[
-            {label: "Авторизация", link: '/auth'},
-            {label: "Витрина проектов", link: '/showcase'},
-            {label: "Расписание конференции", link: '/schedules'},
-        ]} />
+        <HeaderResponsive />
     );
     const footer = (
         <FooterCentered />
     );
-    if (pathname == "/show") {
+    if (pathname === "/show") {
         return (
             <ColorSchemeProvider colorScheme='dark' toggleColorScheme={toggleColorScheme}>
                 <MantineProvider

@@ -78,9 +78,6 @@ export default function Auth() {
                     <Button type="submit" fullWidth mt="xl" href={'/'} color={"indigo.4"}>
                         Войти
                     </Button>
-                    <Button fullWidth mt="xl" variant="outline" color={"indigo.4"}>
-                        Продолжить как гость
-                    </Button>
                 </Paper>
             </form>
         </Container>

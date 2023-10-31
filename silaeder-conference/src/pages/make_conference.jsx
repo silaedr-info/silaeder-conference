@@ -2,9 +2,11 @@ import { useState } from 'react';
 import {Button, Center, Flex, TextInput, Title} from '@mantine/core';
 import {DateTimePicker} from '@mantine/dates';
 import {useForm} from "@mantine/form";
+import {useRouter} from "next/router";
 const Make_conference = () => {
     const form = useForm()
     const [dateTime, setDateTime] = useState(null);
+    const router = useRouter()
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -22,6 +24,8 @@ const Make_conference = () => {
         } else {
             console.error('Failed to add conference');
         }
+        await router.push('/schedules')
+
     }
     return (
         <>

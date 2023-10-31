@@ -21,7 +21,7 @@ async function getTimeOfProjectStart(conference_id, schedule_pos) {
 
     for (let i = 0; i < schedule_pos; i++) {
         projects.forEach((el) => {
-            if (el.schedulePos === i) {
+            if (el.schedulePos === i && !el.isHidden) {
                 time += el.timeForSpeech
             }
         });

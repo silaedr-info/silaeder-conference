@@ -23,7 +23,17 @@ export default async function CreateProject(req, res) {
                 id: parseInt(conference_id)
             }
         });
-        let schedule_pos = await prisma.break.count() + await prisma.project.count();
+        const breaks = await prisma.break.findMany({
+            where: {
+                conferenceId: conference_id
+            }
+        });
+        const projects = await prisma.project.findMany({
+            where: {
+                conferenceId: conference_id
+            }
+        });
+        let schedule_pos = breaks.length + projects.length + 1;
         const project = await prisma.project.findUnique({
             where: {
                 id: req.body.project_id

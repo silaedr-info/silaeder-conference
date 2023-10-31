@@ -8,16 +8,6 @@ export default async function getUserProjects(req, res) {
     if (req.method === "GET") {
         const jwt = getCookie('auth_token', { req, res })
         const user_id = JSON.parse(atob(jwt.split('.')[1])).user_id
-        const user = await prisma.user.findFirst(
-            {
-                where: {
-                    id: user_id,
-                },
-                include: {
-                    projects: true
-                }
-            }
-        );
         const all_projects = await prisma.project.findMany({
             include: {
                 users: true
@@ -31,6 +21,6 @@ export default async function getUserProjects(req, res) {
         })
 
         await prisma.$disconnect()
-        await res.status(200).json({ projects: projects })
+        await res.status(200).json({ projects: projects.sort((a, b) => { return a.users[0].projectId - b.users[0].projectId }) })
     }
 }
