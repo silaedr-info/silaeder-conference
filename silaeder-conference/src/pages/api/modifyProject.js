@@ -23,7 +23,7 @@ export default async function CreateProject(req, res) {
             where: {
                 conferenceId: conference_id
             }
-        });
+        })
         let schedule_pos = breaks.length + projects.length + 1;
         const project = await prisma.project.findUnique({
             where: {

@@ -46,7 +46,7 @@ const Schedule = () => {
     };
     const [data, setData] = useState(start_data);
 
-    const [permission, setPermission] = useState(false);
+    const [permission, setPermission] = useState(true);
 
     const [anotherOpened, changeOpened] = useState(false);
 
@@ -74,14 +74,13 @@ const Schedule = () => {
                 schedule_pos: pos
             })
         })
-        location.reload()
     }
 
     useEffect(() => {
         if(!router.isReady) return;
         const query = router.query;
 
-        console.log(query);
+
 
         fetch('/api/getUserPermission')
         .then(response => response.json())
@@ -244,12 +243,12 @@ const Schedule = () => {
                                 if (el.name_of_project === "Перерыв") {
                                     output.push({
                                         type: "break",
-                                        id: el.id
+                                        id: el.id,
                                     })
                                 } else {
                                     output.push({
                                         type: "project",
-                                        id: el.id
+                                        id: el.id,
                                     })
                                 }
                             })
@@ -270,7 +269,8 @@ const Schedule = () => {
                                 })
                                 .then(response => response.json())
                                 .then(data => {
-                                    console.log(data);
+                                    const output = data.output.filter((elem) => !elem.hidden || permission)
+                                    setData(output)
                                     setData(data.output)
                                 }).catch((e) => {
                                     router.push("/123/123/123")
