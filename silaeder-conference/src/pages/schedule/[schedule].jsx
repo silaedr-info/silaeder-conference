@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import { MantineReactTable } from 'mantine-react-table';
 import { useRouter } from 'next/router';
-import {Box, Button, Title, Tooltip, Select, Text, Modal, Container, NumberInput} from "@mantine/core";
+import {Box, Button, Title, Tooltip, Select, Text, Modal, Container, NumberInput, Flex, Loader} from "@mantine/core";
 import {
     IconEye,
     IconPlayerPlay, IconPlus
@@ -52,7 +52,9 @@ const Schedule = () => {
 
     const form = useForm();
 
-    const [pos, changePos] = useState()
+    const [pos, changePos] = useState();
+
+    const [is_loaded, setIs_loaded] = useState(false);
 
     const [name_of_conference, setName_of_conference] = useState("");
     if (typeof window !== 'undefined') {
@@ -91,37 +93,53 @@ const Schedule = () => {
             } else {
                 setPermission(false)
             }
+
+            const perm = data.permission;
+
+            setIs_loaded(true)
+
+            fetch('/api/getScheduleForConferenceID', {
+                method: 'POST',
+                body: JSON.stringify({ id: Number(router.query.schedule) }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (perm) {
+                    setData(data.output)
+                } else {
+                    let output = [];
+
+                    data.output.forEach((prj) => {
+                        if (!prj.hidden) {
+                            output.push(prj)
+                        }
+                    })
+
+                    setData(output)
+                }
+            }).catch((e) => {
+                router.push("/404")
+            })
+    
+            fetch('/api/getConferenceNameByID', {
+                method: 'POST',
+                body: JSON.stringify({ id: Number(router.query.schedule) }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                setName_of_conference(data.name)
+            }).catch((e) => {
+                router.push("/123/123/123")
+            })
+
         }).catch((e) => {
             router.push("/")
-        })
-
-        fetch('/api/getScheduleForConferenceID', {
-            method: 'POST',
-            body: JSON.stringify({ id: Number(router.query.schedule) }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const output = data.output.filter((elem) => !elem.hidden || permission)
-            setData(output)
-        }).catch((e) => {
-            router.push("/404")
-        })
-
-        fetch('/api/getConferenceNameByID', {
-            method: 'POST',
-            body: JSON.stringify({ id: Number(router.query.schedule) }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            setName_of_conference(data.name)
-        }).catch((e) => {
-            router.push("/123/123/123")
         })
     }, [router.isReady]);
 
@@ -160,6 +178,8 @@ const Schedule = () => {
     }
     return (
         <>
+
+        {is_loaded ? <>
             <Modal opened={anotherOpened} onClose={() => { changeOpened(false) }} title="" centered>
                 <Container size={350} my={10}>
                     <Title
@@ -280,7 +300,14 @@ const Schedule = () => {
                     },
                 })}
             />
-            </Box>
+            </Box></> : <>
+                <Flex w="100%" h="100%" mx="auto" align="center" justify="center">
+                    <Flex align="center" direction="column">
+                        <Loader mb="10px" size="xl" variant="bars" />
+                        <Text size="xl">Пожалуйста подождите</Text>
+                    </Flex>
+                </Flex>
+            </>}
         </>
     );
 };
