@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient();
+import { prisma } from "./_prisma_base";
 
 
 export default async function createEmptyProject(req, res) {
@@ -20,8 +18,6 @@ export default async function createEmptyProject(req, res) {
                 }
             })
             console.log(project.id)
-
-            await prisma.$disconnect()
             
             await res.status(200).json({project_id: project.id});
         // } catch (e) {

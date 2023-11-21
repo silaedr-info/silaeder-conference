@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function getParticipantsOfProjectByID(req, res) {
     const project = await prisma.project.findMany({
         where: {
@@ -29,8 +28,6 @@ export default async function getParticipantsOfProjectByID(req, res) {
             }
         })
     }
-
-    await prisma.$disconnect()
 
     res.status(200).json({ output: output })
 }

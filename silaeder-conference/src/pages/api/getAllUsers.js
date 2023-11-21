@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function getAllUsers(req, res) {
     const users = await prisma.user.findMany()
     const json = []
@@ -8,6 +7,5 @@ export default async function getAllUsers(req, res) {
         json.push({ label: e.name, value: e.id })
     })
 
-    await prisma.$disconnect()
     res.status(200).json({ data: json })
 }

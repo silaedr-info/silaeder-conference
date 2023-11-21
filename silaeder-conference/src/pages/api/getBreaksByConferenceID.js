@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function getBreaksByConferenceID(req, res) {
     const conference = await prisma.conference.findMany({
         where: {
@@ -13,7 +12,5 @@ export default async function getBreaksByConferenceID(req, res) {
     })
     conference[0].break.sort((a, b) => {return a.schedulePos - b.schedulePos})
 
-
-    await prisma.$disconnect()
     res.status(200).json({ breaks: conference[0].break })
 }

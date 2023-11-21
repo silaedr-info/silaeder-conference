@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function addBreak(req, res) {
     const body = JSON.parse(req.body)
     const time = body.time;

@@ -237,7 +237,7 @@ const Index = () => {
                         searchable
                         defaultValue={['US', 'FI']}
                         placeholder="Начните писать ФИО"
-                        label="Участники"
+                        label="Участники (включая научного руководителя и себя)"
                         {...form.getInputProps('users')}
                         required
                     />

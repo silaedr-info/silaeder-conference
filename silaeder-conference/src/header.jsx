@@ -125,7 +125,7 @@ export function HeaderResponsive() {
 
 
     const handleClick = async () => {
-        await fetch('api/logout')
+        await fetch('/api/logout')
         setLinks([
             {label: "Авторизация", link: '/auth'},
             {label: "Витрина проектов", link: '/showcase'},

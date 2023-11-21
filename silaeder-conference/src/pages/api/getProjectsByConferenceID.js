@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function getProjectsByConferenceID(req, res) {
     const conference = await prisma.conference.findMany({
         where: {
@@ -13,6 +12,5 @@ export default async function getProjectsByConferenceID(req, res) {
     })
     conference[0].project.sort((a, b) => {return a.schedulePos - b.schedulePos})
 
-    await prisma.$disconnect()
     res.status(200).json({ projects: conference[0].project })
 }   

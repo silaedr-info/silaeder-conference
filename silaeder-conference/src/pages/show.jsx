@@ -1,31 +1,24 @@
-'use client'
+import React, { useRef } from 'react';
+import { DocumentEditor } from "@onlyoffice/document-editor-react";
 
-import { useState, useEffect } from "react";
-
-
-export default function Show() {
-    const [project, setProject] = useState(0);
-    const [current_project, set_current_project ] = useState(0);
-
-    fetch('/api/getProjectsByConferenceID', {
-        method: 'POST',
-        body: JSON.stringify({ id: 16 }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        setProject(data.projects[current_project].id);
-        // Handle the response data here
-    }).catch((e) => {
-        console.error(e);
-    })
-    console.log(project)
+export default function App() {
     return (
         <>
-            <iframe width="100%" height="100%" src={"https://docs.google.com/gview?url=http://bamaec.ru/"+project+".pptx&embedded=true"}></iframe>
-            <button style={{ position: 'fixed', bottom: 0, right: 0 }} onClick={() => {set_current_project(current_project + 1)}}>next presentation</button>
+            <DocumentEditor
+                id="docxEditor"
+                documentServerUrl="http://server.silaeder.ru:12010/"
+                config={{
+                    "document": {
+                        "fileType": "pptx",
+                        "key": "123",
+                        "title": "Presentation",
+                        "url": "https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_PPTX.pptx"
+                    },
+                    "editorConfig": {
+                        "mode": "view",
+                    },
+                }}
+            />
         </>
-    )
+    );
 }

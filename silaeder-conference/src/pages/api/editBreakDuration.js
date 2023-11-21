@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function editBreakDuration(req, res) {
     const { id, time } = req.body;
 
@@ -12,8 +11,6 @@ export default async function editBreakDuration(req, res) {
             time: time
         }
     });
-
-    await prisma.$disconnect()
 
     res.status(200).json({ ok: true });
 }

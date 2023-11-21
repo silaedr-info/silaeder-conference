@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { getCookie } from "cookies-next";
-
-
-const prisma = new PrismaClient
+import { prisma } from "./_prisma_base";
 
 export default async function getUserProjects(req, res) {
     if (req.method === "GET") {
@@ -22,7 +19,6 @@ export default async function getUserProjects(req, res) {
             })
         })
 
-        await prisma.$disconnect()
         await res.status(200).json({ projects: projects })
     }
 }

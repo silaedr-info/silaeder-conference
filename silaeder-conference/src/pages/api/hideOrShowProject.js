@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function hideOrShowProject(req, res) {
     const project_id = req.body.id;
 
@@ -20,8 +19,6 @@ export default async function hideOrShowProject(req, res) {
             isHidden: !project[0].isHidden
         }
     });
-
-    await prisma.$disconnect()
 
     res.status(200).json({ ok: true })
 }

@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function addConference(req, res) {
     const { name, dateTime } = req.body;
 
@@ -10,8 +9,6 @@ export default async function addConference(req, res) {
             start: new Date(dateTime).toISOString()
         }
     });
-
-    await prisma.$disconnect()
 
     res.status(200).json({ ok: true });
 }

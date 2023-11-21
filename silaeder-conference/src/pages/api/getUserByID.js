@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import {getCookie} from "cookies-next";
-
-const prisma = new PrismaClient()
+import { prisma } from "./_prisma_base";
 
 export default async function getConferenceById(req, res) {
     const jwt = getCookie('auth_token', { req, res })
@@ -12,6 +10,5 @@ export default async function getConferenceById(req, res) {
         }
     })
 
-    await prisma.$disconnect();
     await res.status(200).json({ user: user })
 }

@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient
+import { prisma } from "./_prisma_base";
 
 async function getTimeOfProjectStart(conference_id, schedule_pos) {
     const conference = await prisma.conference.findMany({
@@ -141,8 +139,6 @@ export default async function getScheduleForConferenceID(req, res) {
 
         i++;
     }
-
-    await prisma.$disconnect()
 
     res.status(200).json({output: output})
 }

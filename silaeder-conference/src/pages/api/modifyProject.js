@@ -1,8 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { getCookie } from "cookies-next";
-
-
-const prisma = new PrismaClient
+import { prisma } from "./_prisma_base";
 
 export default async function CreateProject(req, res) {
     if (req.method === "POST") {
@@ -74,7 +70,7 @@ export default async function CreateProject(req, res) {
                 },
             }
         })
-        await prisma.$disconnect()
+        
 
         return res.status(200).json({ success: true })
     }

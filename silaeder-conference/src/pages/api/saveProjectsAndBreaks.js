@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "./_prisma_base";
 
-const prisma = new PrismaClient
 export default async function saveProjectsAndBreaks(req, res) {
     const objects = req.body.objects1;
 
@@ -31,8 +30,6 @@ export default async function saveProjectsAndBreaks(req, res) {
             });
         }
     }
-
-    await prisma.$disconnect()
 
     res.status(200).json({ ok: true })
 }
