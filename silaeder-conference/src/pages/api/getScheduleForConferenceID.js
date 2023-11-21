@@ -65,8 +65,6 @@ async function getParticipantsOfProjectByID(id) {
             }
         });
 
-        console.log(user[0].name)
-
         if (output === "") {
             output = user[0].name
         } else {
