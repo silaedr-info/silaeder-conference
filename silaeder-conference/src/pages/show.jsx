@@ -1,8 +1,13 @@
 import React, { useRef } from 'react';
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
+import { useRouter } from 'next/router';
 
 export default function App() {
     const connection_url = process.env.NEXT_PUBLIC_ONLYOFFICE_CONNECTION_URL;
+    const fileuploader_url = process.env.NEXT_PUBLIC_FILEUPLOADER_URL;
+
+    const router = useRouter();
+    const prj_id = router.query.prj_id;
 
     return (
         <>
@@ -12,9 +17,9 @@ export default function App() {
                 config={{
                     "document": {
                         "fileType": "pptx",
-                        "key": "123",
+                        "key": prj_id,
                         "title": "Presentation",
-                        "url": "https://freetestdata.com/wp-content/uploads/2021/09/Free_Test_Data_100KB_PPTX.pptx"
+                        "url": fileuploader_url+"/get-presentation?prj_id="+prj_id
                     },
                     "editorConfig": {
                         "mode": "view",

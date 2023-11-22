@@ -41,8 +41,8 @@ const Schedule = () => {
     const handleClick = () => {
         router.push('/demonstrateProject');
     };
-    const presentClick = () => {
-        router.push('/auth');
+    const presentClick = (row) => {
+        router.push('/show?prj_id='+row.original.id);
     };
     const [data, setData] = useState(start_data);
 
@@ -226,7 +226,7 @@ const Schedule = () => {
                 }}>
                     {permission ? <><Tooltip label={"Открыть презентацию"} transitionProps={{ transition: 'slide-up', duration: 300 }} withArrow={true} color={"rgba(0.3, 0.3, 0.3, 0.6)"}>
                         <Button color={"indigo.4"} variant={"outline"} leftIcon={<IconPlayerPlay height={30} width={40} color={"#748FFC"} />}
-                                onClick={() => {presentClick()}} pl={'6%'} pr={'3%'}>
+                                onClick={() => {presentClick(row)}} pl={'6%'} pr={'3%'}>
                         </Button>
                     </Tooltip>
                     <Tooltip label={row.original.hidden ? "Показать проект" : "Скрыть проект"} transitionProps={{ transition: 'slide-up', duration: 300 }} withArrow={true} color={"rgba(0.3, 0.3, 0.3, 0.6)"}>

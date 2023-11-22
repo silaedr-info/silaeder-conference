@@ -8,6 +8,7 @@ import { Item, Value } from "@/multiSelect";
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import {IconPhoto, IconUpload, IconX, IconPresentation, IconVideo} from "@tabler/icons-react";
 import ReactPlayer from 'react-player/lazy';
+import { useRouter } from 'next/router';
 
 const Index = () => {
     const [ users, setUsers ] = useState([]);
@@ -16,6 +17,7 @@ const Index = () => {
     const [ authorized, setAuthorized ] = useState(false);
     const [ userProjects, setUserProjects ] = useState([])
     const form = useForm();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchingConferences = async () => {
@@ -93,7 +95,7 @@ const Index = () => {
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", '0')
                 fetch(
-                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL,
+                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL+"/upload",
                     {
                         method: 'post',
                         body
@@ -111,7 +113,7 @@ const Index = () => {
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", 1)
                 fetch(
-                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL,
+                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL+"/upload",
                     {
                         method: 'post',
                         body
@@ -383,12 +385,13 @@ const Index = () => {
                 </Container>
                 }
                 <Divider orientation="vertical"/>
-                <Container sx={{width: '30%'}}>
+                <Container sx={{width: '50vh'}}>
                     <Button mb={'5%'} color={'indigo.6'} fullWidth onClick={handleClick}> Создать новый проект </Button>
                     <SimpleGrid cols={1} spacing="xs" verticalSpacing="xs">
                         { userProjects.map(project => (
                             <ProjectCard key={project.id} name={project.name} description={project.description} projectId={project.id}
-                                         section={project.section} editFunc={async (id) => {const result = (await redact(id)).project; setProjectInformation(result); form.setValues(result)}} />
+                                         section={project.section} editFunc={async (id) => {const result = (await redact(id)).project; setProjectInformation(result); form.setValues(result)}}
+                                         openPresentation={(project_id) => {router.push("/show?prj_id="+project_id)}} />
                         ))}
                     </SimpleGrid>
                 </Container>
