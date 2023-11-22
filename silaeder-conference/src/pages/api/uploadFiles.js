@@ -18,10 +18,13 @@ const post = async (req, res) => {
 };
 
 const saveFile = async (file, type, id, wasProject) => {
+    console.log(file);
+    console.log(file.originalFilename);
     if (fsExists(`./public/${type}/${id}${path.extname(file.originalFilename)}`)) {
         try {
             const data = await fsPromises.readFile(file.filepath);
-            await fsPromises.writeFile(`./public/${type}/${id}${path.extname(file.originalFilename)}`, data);
+            await fsPromises.writeFile(`./public/${type}/${id}${path.extname()}`, data);
+            
             await fsPromises.unlink(file.filepath);
         } catch (e) {
             console.log(e)

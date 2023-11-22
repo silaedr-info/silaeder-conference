@@ -89,16 +89,16 @@ const Index = () => {
             files.forEach((file, index) => {
                 const body = new FormData()
                 body.append("file", file)
-                body.append("id", json.project_id)
+                body.append("prj_id", json.project_id)
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", '0')
                 fetch(
-                    'api/uploadFiles',
+                    'http://localhost:8080/upload',
                     {
                         method: 'post',
                         body
                     }
-                ).then()
+                ).catch(() => {})
             })
         } else {
 
@@ -107,16 +107,16 @@ const Index = () => {
             files.forEach((file, index) => {
                 const body = new FormData()
                 body.append("file", file)
-                body.append("id", currentProject)
+                body.append("prj_id", currentProject)
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", 1)
                 fetch(
-                    'api/uploadFiles',
+                    'http://localhost:8080/upload',
                     {
                         method: 'post',
                         body
                     }
-                ).then()
+                ).catch(() => {})
             })
         }
         await fetch(
