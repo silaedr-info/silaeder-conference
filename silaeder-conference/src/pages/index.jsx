@@ -93,7 +93,7 @@ const Index = () => {
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", '0')
                 fetch(
-                    'http://localhost:8080/upload',
+                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL,
                     {
                         method: 'post',
                         body
@@ -111,7 +111,7 @@ const Index = () => {
                 body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
                 body.append("wasProject", 1)
                 fetch(
-                    'http://localhost:8080/upload',
+                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL,
                     {
                         method: 'post',
                         body
