@@ -2,6 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(fileUpload({
 }));
 
 app.use(bodyParser.json());
+app.use(cors());
 
 //start app 
 const port = process.env.PORT || 8080;

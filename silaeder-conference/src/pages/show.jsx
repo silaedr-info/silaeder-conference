@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DocumentEditor } from "@onlyoffice/document-editor-react";
 import { useRouter } from 'next/router';
 
@@ -9,14 +9,32 @@ export default function App() {
     const router = useRouter();
     const prj_id = router.query.prj_id;
 
+    const [extName, setExtName] = useState("");
+
+    useEffect(() => {
+        if (prj_id != undefined) {
+            fetch(fileuploader_url + '/get-extname?prj_id=' + prj_id)
+                .then(response => response.text())
+                .then(data => {
+                    if (data) {
+                        console.log(data);
+                        setExtName(data);
+                    } else {
+                        console.log("No data received");
+                    }
+                });
+        }
+    }, [prj_id]);
+
     return (
         <>
+        {extName != "" ?
             <DocumentEditor
                 id="docxEditor"
                 documentServerUrl={connection_url}
                 config={{
                     "document": {
-                        "fileType": "pptx",
+                        "fileType": extName,
                         "key": prj_id,
                         "title": "Presentation",
                         "url": fileuploader_url+"/get-presentation?prj_id="+prj_id
@@ -25,7 +43,7 @@ export default function App() {
                         "mode": "view",
                     },
                 }}
-            />
+            /> : <></>}
         </>
     );
 }   
