@@ -66,6 +66,16 @@ app.get('/get-presentation', async (req, res) => {
     })
 })
 
+app.get('/get-extname', async (req, res) => {
+    fs.readdir("./presentations", (err, files) => {
+        files.forEach(file => {
+            if (file.includes(req.query.prj_id)) {
+                res.status(200).send(get_ext(file))
+            }
+        })
+    })
+})
+
 app.listen(port, () => 
   console.log(`App is listening on port ${port}.`)
 );
