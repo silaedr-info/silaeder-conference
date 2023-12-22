@@ -6,7 +6,7 @@ import {useEffect, useState} from "react";
 import { ProjectCard } from "@/projectCard";
 import { Item, Value } from "@/multiSelect";
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import {IconPhoto, IconUpload, IconX, IconPresentation, IconVideo} from "@tabler/icons-react";
+import {IconPhoto, IconUpload, IconX, IconPresentation, IconVideo, IconCheck} from "@tabler/icons-react";
 import ReactPlayer from 'react-player/lazy';
 import { useRouter } from 'next/router';
 
@@ -349,7 +349,7 @@ const Index = () => {
                                   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                               'application/pdf']}>
                         <Group position="center" spacing="xl" style={{ minHeight: rem(100), pointerEvents: 'none' }}>
-                            {0 === 0 &&
+                            {presentation.length === 0 ?
                                 <>
                                     <Dropzone.Accept>
                                         <IconUpload
@@ -369,7 +369,9 @@ const Index = () => {
                                         <IconPresentation size="3.2rem" stroke={1.5} />
                                     </Dropzone.Idle>
                                 </>
-                            }
+                            : <IconCheck size="3.2rem"
+                                         stroke={1.5}
+                                         color={theme.colors.green[theme.colorScheme === 'dark' ? 4 : 6]} />}
                             <div>
                                 <Text size="xl" inline>
                                     Переместите сюда презентацию или нажмите, чтобы выбрать файл
