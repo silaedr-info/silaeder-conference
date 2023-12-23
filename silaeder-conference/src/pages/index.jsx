@@ -147,7 +147,8 @@ const Index = () => {
                 id: id
             })
         });
-        const json = await res.json()
+        const json = await res.json();
+        console.log(json);
         return json;
     }
     const [new_project, change_state] = useState(false)
