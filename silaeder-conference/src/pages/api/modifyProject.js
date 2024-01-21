@@ -1,10 +1,14 @@
 import { prisma } from "./_prisma_base";
+import { getCookie } from "cookies-next";
 
 export default async function CreateProject(req, res) {
     if (req.method === "POST") {
         const { name, description, time_for_speech, grade, section, conference_id, members } = req.body
         const users = [
         ]
+        const jwt = getCookie('auth_token', { req, res })
+        const user_id = JSON.parse(atob(jwt.split('.')[1])).user_id
+        
         const conference = await prisma.conference.findMany({
             where: {
                 id: parseInt(conference_id)
@@ -44,7 +48,17 @@ export default async function CreateProject(req, res) {
                     }
                 })
             }
+            
         })
+        if (!members_of_project_now.includes(user_id)) {
+        users.push({
+            user: {
+                connect: {
+                    id: user_id
+                }
+            }
+        })
+    }
 
         await prisma.project.update({
             where: {

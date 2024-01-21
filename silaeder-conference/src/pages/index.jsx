@@ -50,7 +50,7 @@ const Index = () => {
             setTutor(data.data)
         })
         fetchingProjects().then((data) => {
-            setUserProjects(data.projects.reverse())
+            setUserProjects(data.projects)
         })
         checkLogin().then((data) => {
             if (data.status === 'ok') {
