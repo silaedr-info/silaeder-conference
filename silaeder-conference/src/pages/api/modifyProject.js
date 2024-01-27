@@ -3,12 +3,15 @@ import { getCookie } from "cookies-next";
 
 export default async function CreateProject(req, res) {
     if (req.method === "POST") {
-        const { name, description, time_for_speech, grade, section, conference_id, members } = req.body
+        const { name, description, time_for_speech, grade, section, conference_id, members, tutor_id } = req.body
         const users = [
         ]
+        try {
         const jwt = getCookie('auth_token', { req, res })
         const user_id = JSON.parse(atob(jwt.split('.')[1])).user_id
-        
+        if (members == undefined || tutor_id == undefined || conference_id == undefined || section == undefined) {
+            throw TypeError;
+        }
         const conference = await prisma.conference.findMany({
             where: {
                 id: parseInt(conference_id)
@@ -25,41 +28,19 @@ export default async function CreateProject(req, res) {
             }
         })
         let schedule_pos = breaks.length + projects.length + 1;
-        const project = await prisma.project.findUnique({
-            where: {
-                id: req.body.project_id
-            },
-            include: {
-                users: true,
-            }
-        })
-        const members_of_project_now = []
-        project.users.forEach((e) => {
-            members_of_project_now.push(e.userId)
-        })
-        members.forEach((e) => {
-            if (!members_of_project_now.includes(e)) {
 
-                users.push({
-                    user: {
-                        connect: {
-                            id: e
-                        }
-                    }
-                })
-            }
-            
-        })
-        if (!members_of_project_now.includes(user_id)) {
-        users.push({
-            user: {
-                connect: {
-                    id: user_id
-                }
-            }
-        })
-    }
+        let all_users = await prisma.user.findMany({});
 
+
+        await prisma.projectsOnUsers.deleteMany({
+            where: { projectId: req.body.project_id,
+                    userId: { in: all_users.map((user) => user.id) } },
+        });
+
+        if (!members.includes(user_id)) {
+            members.push(user_id);
+        }
+    
         await prisma.project.update({
             where: {
                 id: req.body.project_id,
@@ -72,18 +53,27 @@ export default async function CreateProject(req, res) {
                 timeForSpeech: time_for_speech,
                 grade: grade,
                 active: true,
+                tutor: {connect: { id: tutor_id }},
                 additionalUsers: req.body.additional_users,
-                users:
-                    {
-                        create: users
-                    },
                 Conference: {
                     connect: {
                         id: conference[0].id,
                     }
                 },
-            }
-        })
+            },
+        });
+
+        members.forEach(async (member) => {
+            await prisma.projectsOnUsers.create({
+                data: {
+                userId: member,
+                projectId: req.body.project_id,
+                }
+            })
+        });
+    } catch {
+        console.log('какой то  подстепин не правильно заполнил форму')
+    }
         
 
         return res.status(200).json({ success: true })

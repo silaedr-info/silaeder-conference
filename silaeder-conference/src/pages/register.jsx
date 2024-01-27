@@ -16,28 +16,31 @@ import {useForm} from "@mantine/form";
 import {setCookie} from "cookies-next";
 import MD5 from "crypto-js/md5";
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 export default function Auth() {
-    const router = useRouter()
+    const router = useRouter();
     const form = useForm({
         initialValues: {
+            name: '',
             email: '',
             password: ''
         },
 
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+            name: (value) => (/^(?:[А-Я][а-я]*\s?){2,}$/.test(value) ? null : 'Invalid name'),
         },
     });
 
-    async function login(email, password) {
+    async function register(name, email, password) {
         const captureResponse = grecaptcha.getResponse();
         if (!captureResponse.length > 0) return
 
-        let res = await fetch("/api/login", {
+        let res = await fetch("/api/register", {
             method: "post",
             body: JSON.stringify({
+                name: name,
                 email: email,
                 password_hash:  MD5(password).toString(),
                 captureResponse : captureResponse,
@@ -71,11 +74,12 @@ export default function Auth() {
             
                 <Paper withBorder shadow="md" p={25} mt={30} radius="md">
 
-                   <SegmentedControl fullWidth data={['Войти', 'Создать аккаунт']} onChange={(x) => {router.push("/register")}} />
+                   <SegmentedControl fullWidth data={['Войти', 'Создать аккаунт']} value={"Создать аккаунт"} onChange={(x) => {router.push("/auth")}} />
 
-
-                   <form onSubmit={form.onSubmit((values) => login(values.email, values.password))}>
-                    <Space h="lg" />
+                        <form onSubmit={form.onSubmit((values) => register(values.name, values.email, values.password))}>
+                            <Space h="lg" />
+                    <TextInput label="ФИО" placeholder="Максим Таран Владимирович"
+                        required {...form.getInputProps('name')} />
                     <TextInput label="Эл. почта" placeholder="jhondoe@example.com"
                                required {...form.getInputProps('email')} />
                     <PasswordInput label="Пароль" placeholder="Password" required
@@ -86,27 +90,18 @@ export default function Auth() {
                         label="Я согласен на обработку персональных данных"
                     />
                     
-
-                    <Anchor component="button" size="sm" align="right">
-                        <a href="/forgot-password" style={{textDecoration: 'none', color: "#748FFC"}}>
-                            Забыли пароль?
-                        </a>
-                    </Anchor>
-
                     <Space h="md" />
-
                         
                     <Center>
                         <div class="g-recaptcha" data-sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_TOKEN} />
                     </Center>
                     
-                    
                     <Button type="submit" fullWidth mt="xl" href={'/'} color={"indigo.4"}>
                         Войти
                     </Button>
-                
-                    </form>
 
+
+                        </form>
                 </Paper>
         </Container>
     );

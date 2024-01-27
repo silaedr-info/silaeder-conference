@@ -105,3 +105,9 @@ a {
     color-scheme: dark;
   }
 }
+
+iframe {
+  border-radius: 5px;
+  width: 302px;
+  height: 76px;
+}

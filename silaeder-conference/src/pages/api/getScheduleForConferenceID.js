@@ -102,6 +102,7 @@ export default async function getScheduleForConferenceID(req, res) {
             }
         });
         
+        
         if (data.length === 0) {
             const data1 = await prisma.break.findMany({
                 where: {

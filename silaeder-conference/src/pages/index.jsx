@@ -70,6 +70,7 @@ const Index = () => {
     const [scale, setScale] = useState(1)
 
     const addProject = async (values, wasProject) => {
+        let users = values.users;
         const body = {
             name: values.name,
             description: values.description,
@@ -78,47 +79,37 @@ const Index = () => {
             time_for_speech: 5,
             conference_id: values.conference,
             tutor_id: values.tutor,
-            members: values.users,
+            members: users,
             additional_users: values.additional_users,
         }
         const files = [image[0], video[0], presentation[0]];
+        console.log(wasProject);
         if (wasProject === false) {
             const res = await fetch('/api/createEmptyProject', {
                 method: "post"
-            });
-            const json = await res.json();
-            body.project_id = json.project_id
-            files.forEach((file, index) => {
-                const body = new FormData()
-                body.append("file", file)
-                body.append("prj_id", json.project_id)
-                body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
-                body.append("wasProject", '0')
-                fetch(
-                    process.env.NEXT_PUBLIC_FILEUPLOADER_URL+"/upload",
-                    {
-                        method: 'post',
-                        body
-                    }
-                ).catch(() => {})
-            })
-        } else {
 
-            console.log(files);
+            });
+
+            let json = await res.json();
+
+            body.project_id = json.project_id;
+        } else {
             body.project_id = currentProject;
-            files.forEach((file, index) => {
-                const body = new FormData()
-                body.append("file", file)
-                body.append("prj_id", currentProject)
-                body.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations')
-                body.append("wasProject", 1)
-                fetch(
+            files.forEach(async (file, index) => {
+                console.log(file);
+                let body2 = new FormData();
+                body2.append("file", file);
+                body2.append("prj_id", currentProject);
+                body2.append("type", index === 0 ? 'images' : index === 1 ? 'videos' : 'presentations');
+                body2.append("wasProject", 1);
+                console.log(body2);
+                await fetch(
                     process.env.NEXT_PUBLIC_FILEUPLOADER_URL+"/upload",
                     {
                         method: 'post',
-                        body
+                        body: body2,
                     }
-                ).catch(() => {})
+                ).catch(() => {});
             })
         }
         await fetch(
@@ -147,8 +138,25 @@ const Index = () => {
                 id: id
             })
         });
+        const tutorsraw = await fetch("/api/getAllTutors");
+        let tutors = Array([]);
+        let tutors_hig = await tutorsraw.json();
+        tutors_hig.data.forEach((x) => {
+            tutors.push(x.value);
+        })
         const json = await res.json();
         console.log(json);
+        let current_tutor = json.project.tutorId;
+        let users = Array([]);
+        console.log(json.project.users);
+        json.project.users.forEach((x) => {
+            users.push(x.userId);
+            if (tutors.includes(x.userId)) {
+                users.remove(x.userId);
+            }
+        })
+        let new_json = Object.assign(json.project, {"conference": json.project.conferenceId.value, "users": users, "tutor": current_tutor})
+        json.project = new_json;
         return json;
     }
     const [new_project, change_state] = useState(false)
@@ -233,15 +241,15 @@ const Index = () => {
                                {...form.getInputProps('grade')}
                                required />
                     <MultiSelect
+
+                        {...form.getInputProps('users')}
                         data={users}
                         limit={20}
                         valueComponent={Value}
                         itemComponent={Item}
                         searchable
-                        defaultValue={['US', 'FI']}
                         placeholder="Начните писать ФИО"
                         label="Участники (включая научного руководителя и себя)"
-                        {...form.getInputProps('users')}
                         required
                     />
                     <Space h='lg' />
@@ -344,8 +352,7 @@ const Index = () => {
                         </Group>
                     </Dropzone>
                     <Dropzone mb={'2%'}
-                              onDrop={(files) => {setPresentation(files)}}
-                              maxSize={3 * 1024 ** 2}
+                              onDrop={setPresentation}
                               accept={['application/vnd.ms-powerpoint',
                                   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                               'application/pdf']}>
@@ -363,7 +370,7 @@ const Index = () => {
                                         <IconX
                                             size="3.2rem"
                                             stroke={1.5}
-                                            color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
+                                           v color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
                                         />
                                     </Dropzone.Reject>
                                     <Dropzone.Idle>

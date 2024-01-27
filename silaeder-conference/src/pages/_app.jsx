@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HeaderResponsive } from "@/header";
 import { FooterCentered } from "@/footer";
 import { usePathname } from 'next/navigation'
+import Script from 'next/script'
 
 export default function App(props) {
     const { Component, pageProps } = props;
@@ -20,6 +21,7 @@ export default function App(props) {
     );
     if (pathname === "/show") {
         return (
+            
             <ColorSchemeProvider colorScheme='dark' toggleColorScheme={toggleColorScheme}>
                 <MantineProvider
                     withGlobalStyles
@@ -29,7 +31,9 @@ export default function App(props) {
                     }}
                 >
                     <AppShell>
+
                 <Component {...pageProps} />
+                    <Script id="recaptcha" src={`https://www.google.com/recaptcha/api.js`} />
                 </AppShell>
                 </MantineProvider>
             </ColorSchemeProvider>
@@ -56,6 +60,8 @@ export default function App(props) {
                         footer={footer}
                     >
                     <Component {...pageProps} />
+
+                    <Script id="recaptcha" src={`https://www.google.com/recaptcha/api.js`} />
                     </AppShell>
                 </MantineProvider>
             </ColorSchemeProvider>

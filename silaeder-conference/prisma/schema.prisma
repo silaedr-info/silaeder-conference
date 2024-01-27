@@ -15,6 +15,7 @@ model User {
   isOrganisator Boolean
   isStudent     Boolean
   isTutor       Boolean
+  tutoringProjects Project[]
   projects      ProjectsOnUsers[]
 }
 
@@ -26,6 +27,8 @@ model Project {
   timeForSpeech   Int
   schedulePos     Int
   active          Boolean
+  tutorId         Int?
+  tutor           User?            @relation(fields: [tutorId], references: [id])
   conferenceId    Int?
   grade           Int
   isHidden        Boolean           @default(false)
