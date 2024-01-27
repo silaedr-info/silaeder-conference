@@ -30,7 +30,7 @@ export default async function handler(req, res) {
                 password_hash: password_hash,
                 isOrganisator: false,
                 isStudent: true,
-                isTutor: true
+                isTutor: false
             }
         })
         console.log(user.id)
